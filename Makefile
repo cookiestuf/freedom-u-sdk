@@ -225,7 +225,7 @@ LINUX = 0FC63DAF-8483-4772-8E79-3D69D8477DE4
 FSBL  = 5B193300-FC78-40CD-8002-E86C45580B47
 
 .PHONY: format-boot-loader
-format-boot-loader: $(bin)
+format-boot-loader: 
 	@test -b $(DISK) || (echo "$(DISK): is not a block device"; exit 1)
 	sgdisk --clear                                                               \
 		--new=1:2048:67583  --change-name=1:bootloader --typecode=1:$(BBL)   \
@@ -245,5 +245,5 @@ else
 	@echo Error: Could not find bootloader partition for $(DISK)
 	@exit 1
 endif
-	dd if=$< of=$(PART1) bs=4096
+	dd if=$(bin) of=$(PART1) bs=4096
 	mke2fs -t ext3 $(PART2)
