@@ -209,6 +209,10 @@ bbl: $(bbl)
 clean:
 	rm -rf -- $(wrkdir) $(toolchain_dest)
 
+.PHONY: clean-ramfs
+clean-ramfs:
+	rm -f $(vmlinux) $(vmlinux_stripped) $(bbl) $(bin)
+
 .PHONY: sim
 sim: $(spike) $(bbl)
 	$(spike) --isa=$(ISA) -p4 $(bbl)
