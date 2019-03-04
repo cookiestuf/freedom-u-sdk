@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+
+SYSLOGD_ARGS=-n
+KLOGD_ARGS=-n
+
+start() {
+     cd /spec17-intspeed && ./intspeed.sh 641.leela_s --threads 1 --counters
+     sync
+     poweroff -f
+}
+
+exit
+
+
+
+
+
+
