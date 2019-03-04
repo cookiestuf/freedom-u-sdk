@@ -6,7 +6,7 @@ hpm_pids=()
 for ((i=0;i<$num_harts;i++))
 do
     mask_decimal=$[ 1 << $i ]
-    ./hpm_counters > $output_dir/hpm_counters$i.out &
+    hpm_counters > $output_dir/hpm_counters$i.out &
     hpm_pids+=($!)
     taskset -p `printf %x $mask_decimal` $!
 done
