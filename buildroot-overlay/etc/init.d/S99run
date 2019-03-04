@@ -7,7 +7,6 @@ KLOGD_ARGS=-n
 start() {
     cd /spec17-intspeed && ./intspeed.sh 641.leela_s --threads 1
     sync
-    poweroff -f
 }
 
 case "$1" in
