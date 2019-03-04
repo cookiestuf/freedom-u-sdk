@@ -213,6 +213,11 @@ clean:
 clean-ramfs:
 	rm -f $(vmlinux) $(vmlinux_stripped) $(bbl) $(bin)
 
+.PHONY: clean-br
+clean-br:
+	rm -rf $(buildroot_initramfs_wrkdir) $(buildroot_initramfs_sysroot)
+	rm -f $(buildroot_initramfs_sysroot_stamp)
+
 .PHONY: sim
 sim: $(spike) $(bbl)
 	$(spike) --isa=$(ISA) -p4 $(bbl)
