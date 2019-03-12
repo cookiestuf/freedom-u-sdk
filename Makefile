@@ -24,6 +24,11 @@ buildroot_rootfs_wrkdir := $(wrkdir)/buildroot_rootfs
 buildroot_rootfs_ext := $(buildroot_rootfs_wrkdir)/images/rootfs.ext4
 buildroot_rootfs_config := $(confdir)/buildroot_rootfs_config
 
+files_stamp := $(wrkdir)/.files
+benchmark := spec17-intspeed
+init_script := etc/init.d/S99run
+br-overlay := $(srcdir)/buildroot-overlay
+
 linux_srcdir := $(srcdir)/linux
 linux_wrkdir := $(wrkdir)/linux
 linux_defconfig := $(confdir)/linux_defconfig
@@ -68,6 +73,11 @@ ifneq ($(RISCV),$(toolchain_dest))
 $(RISCV)/bin/$(target)-gcc:
 	$(error The RISCV environment variable was set, but is not pointing at a toolchain install tree)
 endif
+
+$(files_stamp):
+	cp -fL $(br-overlay)/$(benchmark)/hpm_counters $(buildroot_initramfs_sysroot)/$(benchmark)/hpm_counters
+	cp -f $(br-overlay)/$(init_script) $(buildroot_initramfs_sysroot)/$(init_script)
+	touch $@
 
 $(toolchain_dest)/bin/$(target)-gcc: $(toolchain_srcdir)
 	mkdir -p $(toolchain_wrkdir)
@@ -131,7 +141,7 @@ ifeq ($(ISA),$(filter rv32%,$(ISA)))
 	$(MAKE) -C $(linux_srcdir) O=$(linux_wrkdir) ARCH=riscv olddefconfig
 endif
 
-$(vmlinux): $(linux_srcdir) $(linux_wrkdir)/.config $(buildroot_initramfs_sysroot_stamp)
+$(vmlinux): $(linux_srcdir) $(linux_wrkdir)/.config $(buildroot_initramfs_sysroot_stamp) $(files_stamp)
 	$(MAKE) -C $< O=$(linux_wrkdir) \
 		CONFIG_INITRAMFS_SOURCE="$(confdir)/initramfs.txt $(buildroot_initramfs_sysroot)" \
 		CONFIG_INITRAMFS_ROOT_UID=$(shell id -u) \
@@ -211,7 +221,7 @@ clean:
 
 .PHONY: clean-ramfs
 clean-ramfs:
-	rm -f $(vmlinux) $(vmlinux_stripped) $(bbl) $(bin)
+	rm -f $(vmlinux) $(vmlinux_stripped) $(bbl) $(bin) $(files_stamp)
 
 .PHONY: clean-br
 clean-br:
